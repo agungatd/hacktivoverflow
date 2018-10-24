@@ -50,7 +50,7 @@ import { mapState, mapActions } from 'vuex'
       localStorage.removeItem('token')
       localStorage.removeItem('username')
       localStorage.removeItem('userId')
-      this.isLogin = false
+      this.getIsLogin()
       this.signOut()
     },
     signOut() {

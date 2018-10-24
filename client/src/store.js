@@ -25,6 +25,8 @@ export default new Vuex.Store({
       commit('setIsLogin', true)
       if(localStorage.getItem('token')) {
         commit('setIsLogin', true)
+      } else {
+        commit('setIsLogin', false)
       }
     },
     getUsername({commit, dispatch}, payload) {
