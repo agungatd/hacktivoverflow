@@ -40,7 +40,7 @@ app.use(function(req, res, next) {
 });
 
 app.listen(()=>{
-  console.log('Listened on port 3000')
+  console.log('Listened on port', process.env.PORT)
 })
 // error handler
 // app.use(function(err, req, res, next) {

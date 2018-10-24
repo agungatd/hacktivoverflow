@@ -1,5 +1,5 @@
 const config = {
-  port: `http://localhost:3000`
+  port: `http://35.198.207.24`
 }
 
 export default config.port
