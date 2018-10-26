@@ -1,5 +1,5 @@
 <template>
-  <div class="about" style='background-color: #133337;'>
+  <div class="about">
     <div class="card">
       <img :src='avatar' alt="John" style="width:100%">
       <span style='color:blue; cursor:pointer' @click='changeAvatar'>change avatar</span>
@@ -61,11 +61,13 @@ import {mapActions, mapState} from "vuex"
   }
 </script>
 
-<style>
-body {
-  
+<style scoped>
+.about {
+  padding: 20px 0;
+  background-color: none;
 }
-  .card {
+
+.card {
     margin-top: 30px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     max-width: 300px;

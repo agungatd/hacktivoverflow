@@ -9,7 +9,9 @@
       <p>Posted on {{ getDate(question.createdAt) }}</p>
     <hr>
     <div class='paragraf' v-html="question.contents">
-      
+    </div><hr>
+    <div class='tags'>
+      <em>Tags: </em><span v-for='tag in question.tags'><button class='btn btn-small btn-primary' disabled>{{tag}}</button>&nbsp;</span>
     </div>
     <div v-if='activeId === question.questioner._id'><br><br>
       <button class='btn-sm btn-primary' data-toggle="modal" data-target="#editModal">Edit question</button> &nbsp; <button class='btn-sm btn-danger' data-toggle="modal" data-target="#deleteModal">Delete question</button>
@@ -17,14 +19,14 @@
     <hr>
     <div class='row' id='icons'>
       <div class='col-sm-4'>
-        <span style='color: red;' @click='addUpvote' v-if='!hasUpvoted'><i class="fa fa-thumbs-up"></i> Upvote &nbsp;&nbsp;</span>
-        <span style='color: grey; cursor:default; background-color:white;' v-if='hasUpvoted'><i class="fa fa-thumbs-up"></i> Upvoted &nbsp;&nbsp;</span>
-        <span  style='color: darkblue;' @click='addDownvote' v-if='!hasDownvoted'><i class="fa fa-thumbs-down" aria-hidden="true"></i> Downvote</span>
-        <span  style='color: grey; cursor:default background-color:white;' v-if='hasDownvoted'><i class="fa fa-thumbs-down" aria-hidden="true"></i> Downvoted</span>
+        <span style='color: red;' @click='addUpvote' v-if='!hasUpvoted'><i class="fa fa-thumbs-up">Upvote</i>  &nbsp;&nbsp;</span>
+        <span style='color: grey; cursor:default; background-color:white; !important' v-if='hasUpvoted'><i class="fa fa-thumbs-up">Upvoted</i>  &nbsp;&nbsp;</span>
+        <span  style='color: darkblue;' @click='addDownvote' v-if='!hasDownvoted'><i class="fa fa-thumbs-down" aria-hidden="true">Downvote</i> </span>
+        <span style='color: grey; cursor:default; background-color:white; !important' v-if='hasDownvoted'><i class="fa fa-thumbs-down" aria-hidden="true">Downvoted</i> </span>
           <span></span>
       </div>
       <div class='col-sm-4'>
-        <span style='color: blue;' @click='showShare'><i class="fa fa-share-alt" aria-hidden="true"></i> Share</span> 
+        <span style='color: blue;' @click='showShare'><i class="fa fa-share-alt" aria-hidden="true">Share</i> </span> 
       </div>
       <div class='col-sm-4'>
         Total vote: {{ question.userLikes.length - question.userDislikes.length }}
@@ -43,8 +45,10 @@
         <div style='text-align:left; padding-left:5px;'>{{ answer.user.username }} Answered:</div>
         <div style='text-align:right ; padding-right:5px;'>{{ answer.answer }}</div>
         <div>
-          <span style='color: red;' @click='commentUpvote(answer._id)'><i class="fa fa-thumbs-up"></i> Upvote &nbsp;&nbsp;</span>
-          <span  style='color: darkblue;' @click='commentDownvote(answer._id)'><i class="fa fa-thumbs-down" aria-hidden="true"></i> Downvote</span>
+          <span style='color: red;' @click='commentUpvote(answer._id)' v-if='!hasUpvotedAns'><i class="fa fa-thumbs-up">Upvote</i>  &nbsp;&nbsp;</span>
+        <span style='color: grey; cursor:default; background-color:white; !important' v-if='hasUpvotedAns'><i class="fa fa-thumbs-up">Upvoted</i>  &nbsp;&nbsp;</span>
+        <span  style='color: darkblue;' @click='commentDownvote(answer._id)' v-if='!hasDownvotedAns'><i class="fa fa-thumbs-down" aria-hidden="true">Downvote</i> </span>
+        <span  style='color: grey; cursor:default; background-color:white; !important' v-if='hasDownvotedAns'><i class="fa fa-thumbs-down" aria-hidden="true">Downvoted</i> </span>
           <span style='text-align: right;'>&nbsp;Total vote: {{answer.userLike.length - answer.userDislike.length}}</span>
         </div>
       </div>
@@ -124,7 +128,9 @@
         shareOpen: false,
         showAnswer: false,
         hasUpvoted: false,
-        hasDownvoted: false
+        hasDownvoted: false,
+        hasDownvotedAns: false,
+        hasUpvotedAns: false
       }
     },
     methods: {
@@ -135,8 +141,6 @@
           this.question.userDislikes.pull()
         }
         let self = this
-        let userId = localStorage.getItem('userId')
-        let questionId = this.$router.history.current.params.id
         axios.put(`${portUrl}/questions/upvote/${questionId}`, {}, {
           headers: {
             authorization: `Bearer ${localStorage.getItem('token')}`
@@ -148,7 +152,26 @@
           console.log('fail upvote-->', err)
         });
       },
+      addDownvote() {
+        this.hasDownvoted = true
+        if(this.hasUpvoted) {
+          this.hasUpvoted = false
+          this.question.userLikes.pull()
+        }
+        let self = this
+        axios.put(`${portUrl}/questions/downvote/${questionId}`, {}, {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        .then((result) => {
+          console.log('success upvote-->', result)
+        }).catch((err) => {
+          console.log('fail upvote-->', err)
+        });
+      },
       commentUpvote(answerId) {
+        this.hasUpvotedAns = true
         let userId = localStorage.getItem('userId')
         this.question.userLikes.push(userId)
         axios.put(`${portUrl}/answers/upvote/${answerId}`, {}, {
@@ -163,6 +186,7 @@
         });
       },
       commentDownvote(answerId) {
+        this.hasDownvotedAns = true
         let userId = localStorage.getItem('userId')
         this.question.userLikes.push(userId)
         axios.put(`${portUrl}/answers/downvote/${answerId}`, {}, {
@@ -174,26 +198,6 @@
           console.log('success downvote-->', result)
         }).catch((err) => {
           console.log('fail downvote-->', err)
-        });
-      },
-      addDownvote() {
-        this.hasDownvoted = true
-        if(this.hasUpvoted) {
-          this.hasUpvoted = false
-          this.question.userLikes.pull()
-        }
-        let self = this
-        let questionId = this.$router.history.current.params.id
-        this.question.userDislikes.push(userId)
-        axios.put(`${portUrl}/questions/downvote/${questionId}`, {}, {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        })
-        .then((result) => {
-          console.log('success upvote-->', result)
-        }).catch((err) => {
-          console.log('fail upvote-->', err)
         });
       },
       backToHome() {
@@ -331,6 +335,8 @@
 <style >
 .main-content {
   background-color: white;
+  padding: 20px;
+  border-radius: 5%;
 }
 #image {
   min-height: 400px;
@@ -341,7 +347,7 @@
   text-justify: inter-word;
   width: 100%
 }
-span:hover{
+span i:hover{
   cursor: pointer;
   background-color: lightgrey;
 }
@@ -351,20 +357,17 @@ span:hover{
   min-width:700px;
   background-color: #e6e6fa;
 }
-.liveChat {
-  border: 1px solid cyan;
-  min-width:auto;
-  background-color: #c6e2ff;
-  border-radius: 50px;
-}
-.liveChat span {
-  text-align: left;
-}
-.liveChat p {
-  text-align: center;
-}
 #back:hover {
   cursor:pointer;
   border-bottom: 1px solid blue;
 }
+.tags {
+  text-align: left;
+  cursor: default;
+}
+.deactivated:hover{
+  background-color: white;
+  cursor:default;
+}
+
 </style>

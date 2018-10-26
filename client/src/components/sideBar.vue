@@ -1,11 +1,11 @@
 <template>
   <div class='side-bar'>
     <br>
-    <h3>List of Questions:</h3> {{isLogin}}
+    <h3>List of Questions:</h3> 
     <div>
       <i class="fa fa-search"></i>
       <input type="text" class="form-group" placeholder="Search by question.." @keyup='searchQuestion' v-model='query'>
-      <div class='row'>
+      <div class='row' style='border-bottom:3px solid darkblue; padding-bottom:10px;'>
         <div class='col-sm-12'>
           <button class='btn-sm btn-dark' v-if='isLogin' @click='showMyQuestions'>Show my questions only</button>
         </div>
@@ -19,6 +19,7 @@
         <div><small>{{ getDate(question.date) }}</small></div>
         <div style='color: blue;'><p>By {{question.questioner.username}}</p></div>
       </div>
+
       <h4 class="heading" style='color: blue;'>{{question.title}}</h4>
       <p v-html='question.contents'>...</p>
       <router-link :to="{ path: `/question/${question.id}`}">
@@ -74,13 +75,13 @@
         });
       },
       getQuestions() {
-        console.log('get all questions')
+        // console.log('get all questions')
         this.questions = []
         let self = this
         axios.get(`${portUrl}/questions`)
         .then((result) => {
           result.data.forEach(question=>{
-            let summary = question.contents.slice(0,100)
+            let summary = question.contents.slice(0,100)+'...'
             let data = {
               id: question._id,
               title : question.title,
@@ -94,7 +95,7 @@
             }
             self.questions.push(data)
           })
-          console.log(result.data[0], 'questions---->', self.questions)
+          // console.log(result.data[0], 'questions---->', self.questions)
         }).catch((err) => {
           console.log('Sorry Error:', err)
         });
@@ -150,5 +151,11 @@
     color: slateblue;
     background-color: whitesmoke;
     cursor: pointer;
+  }
+  .btn-sm:hover {
+    cursor:pointer;
+    transform:scale(1.3,1.3);
+    -webkit-transform:scale(1.3,1.3);
+    -moz-transform:scale(1.3,1.3);
   }
 </style>

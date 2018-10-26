@@ -27,27 +27,15 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     minlength: [6,'Password length minimal is 6 characters!']
-  },
-  comments: [{
-    type: Schema.Types.ObjectId, 
-    ref: 'Comment' 
-  }]
+  }
 }, {
   timestamps: true
 })
 
-UserSchema.post('save', function() {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-  const msg = {
-      to: this.email,
-      from: 'webappagung@gmail.com',
-      subject: 'Success register',
-      text: 'Thanks for register',
-      html: '<p>Thanks for register in <strong>Hacktiv-Overflow</strong></p>',
-  }
-  sgMail.send(msg)
-  sendEmail(this.email)
-});
+// UserSchema.post('save', function() {
+//   console.log('masuk hooks:', this.email)
+//   sendEmail(this.email)
+// });
 
 const User = mongoose.model('User', UserSchema)
 

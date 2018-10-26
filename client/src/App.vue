@@ -50,7 +50,9 @@ import { mapState, mapActions } from 'vuex'
       localStorage.removeItem('token')
       localStorage.removeItem('username')
       localStorage.removeItem('userId')
-      this.getIsLogin()
+      this.getIsLogin(false)
+      this.getUserId('')
+      this.getUsername('')
       this.signOut()
     },
     signOut() {
@@ -67,9 +69,9 @@ import { mapState, mapActions } from 'vuex'
   },
   created() {
     if(localStorage.getItem('token')) {
-      this.getIsLogin()
-      this.getUsername()
-      this.getUserId()
+      this.getIsLogin(true)
+      this.getUsername(localStorage.getItem('username'))
+      this.getUserId(localStorage.getItem('userId'))
     }
   }
 };
@@ -85,6 +87,8 @@ import { mapState, mapActions } from 'vuex'
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-image: url('https://images.pexels.com/photos/1452701/pexels-photo-1452701.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
+  background-size: cover;
 }
 .container {
   padding-top: 125px;
@@ -92,7 +96,7 @@ import { mapState, mapActions } from 'vuex'
 }
 #nav {
   padding: 10px;
-  background-color: lightgrey;
+  background-color: #c6e2ff;
 }
 
 #nav a {

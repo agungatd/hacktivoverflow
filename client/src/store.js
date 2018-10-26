@@ -15,6 +15,7 @@ export default new Vuex.Store({
     },
     setUsername(state, payload) {
       state.username = payload
+      console.log('masuk store setUsername:::', state.username)
     },
     setUserId(state, payload) {
       state.userId = payload
@@ -22,18 +23,20 @@ export default new Vuex.Store({
   },
   actions: {
     getIsLogin({commit, dispatch}, payload) {
-      commit('setIsLogin', true)
+      commit('setIsLogin', payload)
       if(localStorage.getItem('token')) {
-        commit('setIsLogin', true)
+        commit('setIsLogin', payload)
       } else {
-        commit('setIsLogin', false)
+        commit('setIsLogin', payload)
+        this.$router.push('/login')
       }
     },
     getUsername({commit, dispatch}, payload) {
-      commit('setUsername', localStorage.getItem('username'))
+      console.log('masuk stor getusername:', payload)
+      commit('setUsername', payload)
     },
     getUserId({commit, dispatch}, payload) {
-      commit('setUserId', localStorage.getItem('userId'))
+      commit('setUserId', payload)
     }
   }
 })

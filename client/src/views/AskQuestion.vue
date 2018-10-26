@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id='ask'>
      <div class="alert alert-success" role="alert" v-if='success'>
         {{ msg }}
       </div>
@@ -24,7 +24,7 @@
     </div>
        <!-- <textarea class="form-control" id="exampleFormControlTextarea1" name='contents' rows="5" v-model='contents'></textarea>-->
       
-      <button class='btn btn-success' @click='createQuestion'>Post Your Question</button>
+      <button class='btn btn-primary' @click='createQuestion'>Post Your Question</button>
     
   </div>
 </template>
@@ -106,6 +106,15 @@ export default {
 }
 </script>
 
-<style >
-  
+<style scoped>
+  * {
+    background-color: white;
+    padding: 10px;
+  }
+  .btn {
+    color: black;
+  }
+  .btn:hover {
+    color: white;
+  }
 </style>

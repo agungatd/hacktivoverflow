@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id='login-form'>
       <div style='text-align: center'>
         <div id="my-signin2" style='display: inline-block'></div>
       </div>
@@ -60,7 +60,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-primary" @click='register'>Sign Up</button>
-              <button type="button" class="btn btn-secondary" data-dismiss="modal" @click='neutralize'>Close</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" @click='clearState'>Close</button>
             </div>
           </div>
         </div>
@@ -93,7 +93,7 @@ export default {
     ...mapState(["isLogin"])
   },
   methods: {
-    ...mapActions(["getIsLogin"]),
+    ...mapActions(["getIsLogin", "getUsername", "getUserId"]),
     neutralize(){
       this.msg = '',
       this.error = false,
@@ -132,36 +132,38 @@ export default {
     },
     register() {
       let self = this
-      this.neutralize()
-       axios({
-         url: `https://randomuser.me/api/`,
-         method: 'GET'
-       })
+       axios.get(`https://randomuser.me/api`)
         .then((result) => {
-          let data = {
+          // console.log('masuk register user*****')
+
+          axios.post(`${portUrl}/users/register`, {
             avatar: result.data.results[0].picture.large,
             username: self.username,  
             email: self.email,
             password: self.password
-          }
-            // console.log('masuk register user*****', data, self.email,'pass:', this.password)
-          axios.post(`${portUrl}/users/register`, data)
+          })
           .then((result) => {
             // console.log('success register in then')
             self.success = true
             self.error = false
             self.msg = 'Successfully registered!'
-            this.clearState()
+            this.$router.push({ path: `/login` })
+          })
+          .catch(err=>{
+            self.success = false
+            self.error = true
+            self.msg = err.response.data.message || 'invalid email/password!'
+            // console.log('error when registration', err)
           })
         }).catch((err) => {
           self.success = false
             self.error = true
             self.msg = err.response.data.message || 'Bad request!'
-          // console.log('FAIL register catch--',err.response)
+          // console.log('FAIL get avatarr catch--',err.response)
         });
     },
     login(email, password) {
-      this.neutralize()
+      this.clearState()
       let self = this
       axios.post(`${portUrl}/users/signin`, {
         email: email,
@@ -176,11 +178,15 @@ export default {
           self.success = true
           self.error = false
           self.msg = 'Successfully Log in!'
+          let userId = result.data.result._id
+          let username = result.data.username
           localStorage.setItem('token',result.data.token)
-          localStorage.setItem('userId',result.data.result._id)
-          localStorage.setItem('username', result.data.username)
+          localStorage.setItem('userId', userId)
+          localStorage.setItem('username', username)
           localStorage.setItem('avatar', result.data.avatar)
-          this.getIsLogin()
+          this.getIsLogin(true)
+          this.getUserId(userId)
+          this.getUsername(username)
         }
           self.clearState()
           this.$router.push({ path: `/` })
@@ -217,6 +223,10 @@ export default {
 </script>
 
 <style >
+  #login-form {
+    background-color: white;
+    padding: 20px;
+  }
   #register {
     color:blue;
   }

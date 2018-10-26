@@ -61,7 +61,7 @@ router.patch('/:id', (req, res)=>{
 })
 
 router.post('/register', (req, res)=>{
-  console.log(req.body)
+  console.log('req.body--', req.body)
   User.create({
     avatar: req.body.avatar,
     username: req.body.username,
@@ -69,9 +69,10 @@ router.post('/register', (req, res)=>{
     password: hash.hash(req.body.password)
   })
   .then((result) => {
-    console.log('masuk Router register user*****', result)
+    console.log('masuk Router register user dan berhasil create::::', result)
     res.status(200).json(result)
-  }).catch((err) => {
+  })
+  .catch((err) => {
     res.status(400).json(err)
   });
 });

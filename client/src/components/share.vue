@@ -33,10 +33,10 @@
    },
    data() {
      return {
-       url: 'http://localhost:8080/',
-       shareUrl : `http://localhost:8080/home/${this.article._id}`,
+       url: 'http://hacktiv-overflow-220410.firebaseapp.com/',
+       shareUrl : `http://hacktiv-overflow-220410.firebaseapp.com/home/${this.article._id}`,
        title: 'Go-Blog ID',
-       source: 'http://localhhost:8080/',
+       source: 'http://hacktiv-overflow-220410.firebaseapp.com/',
        media: '',
        twit: ''
      }
